@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 const BASE_URL = 'https://lernia-sjj-assignments.vercel.app/api';
 
 // Helper function to validate date format (YYYY-MM-DD)
