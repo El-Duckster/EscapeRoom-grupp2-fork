@@ -1,55 +1,52 @@
-name: API Testing Workflow
+name: Build and Test API Script
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  test-api:
+  build:
     runs-on: ubuntu-22.04
 
     steps:
-    # Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Set up Node.js
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      # Step 2: Set up Node.js (version 18)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    # Install dependencies
-    - name: Install dependencies
-      run: npm install
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
 
-    # Test API Endpoints
-    - name: Test API
-      run: |
-        node <<EOF
-        const fetch = require('node-fetch');
+      # Step 4: Run Node.js script
+      - name: Run Node.js API script
+        run: |
+          node <<EOF
+          import fetch from 'node-fetch';
 
-        async function testAPI() {
-          const response = await fetch('https://example.com/api', { method: 'GET' });
-          if (response.ok) {
-            console.log('API GET request passed!');
-          } else {
-            throw new Error('API GET request failed');
-          }
+          const BASE_URL = 'https://lernia-sjj-assignments.vercel.app/api';
 
-          const postResponse = await fetch('https://example.com/api', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: 'test' })
-          });
+          const fetchAllChallenges = async () => {
+            try {
+              const response = await fetch(`${BASE_URL}/challenges`);
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              const data = await response.json();
+              console.log('Challenges:', data);
+            } catch (error) {
+              console.error('Error fetching challenges:', error);
+            }
+          };
 
-          if (postResponse.ok) {
-            console.log('API POST request passed!');
-          } else {
-            throw new Error('API POST request failed');
-          }
-        }
-
-        testAPI().catch(err => {
-          console.error(err);
-          process.exit(1);
-        });
-        EOF
+          fetchAllChallenges();
+          EOF
