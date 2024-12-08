@@ -23,7 +23,7 @@ jobs:
 
     # Run Linting
     - name: Run ESLint
-      run: npx eslint . --ext .js
+      run: npx eslint .
 
     # Run Unit Tests Jest
     - name: Run Tests
